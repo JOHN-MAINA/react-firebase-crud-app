@@ -14,7 +14,7 @@ class ViewStudents extends React.Component {
 
         const studs = this.state.students.map((student) =>
             <li className="list-group-item d-flex justify-content-between align-items-center" key={student.id}>
-                <span className="badge badge-primary badge-pill">14</span>
+                <span className="badge badge-primary badge-pill">{student.admission_year}</span>
                 {student.name}
             </li>
         );
@@ -22,10 +22,6 @@ class ViewStudents extends React.Component {
             <div>
                 <ul className="list-group">
                     {studs}
-                    <li className="list-group-item d-flex justify-content-between align-items-center">
-                        Morbi leo risus
-                        <span className="badge badge-primary badge-pill">1</span>
-                    </li>
                 </ul>
 
             </div>
@@ -41,7 +37,9 @@ class ViewStudents extends React.Component {
                         "id": student.id,
                         "name": student.data().name,
                         "course": student.data().course,
-                        "dob": student.data().dob
+                        "dob": student.data().dob,
+                        "student_id": student.data().student_id,
+                        "admission_year": student.data().admission_year
                     };
                     $this.setState(prevState => ({
                         students: [...prevState.students, data]

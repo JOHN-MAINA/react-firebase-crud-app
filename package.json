@@ -7,6 +7,7 @@
     "firebase": "^4.12.1",
     "font-awesome": "^4.7.0",
     "react": "^16.3.0",
+    "react-ckeditor-component": "^1.0.7",
     "react-dom": "^16.3.0",
     "react-scripts": "1.1.1"
   },
