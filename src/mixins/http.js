@@ -92,7 +92,7 @@ export default {
     deleteDocument: function (collection, id) {
 
         return Promise((resolve, reject) => {
-            var jobskill_query = db.collection('job_skills').where('job_id','==',post.job_id);
+            var jobskill_query = db.collection(collection).where('id','==',id);
             jobskill_query.get(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     doc.ref.delete();
