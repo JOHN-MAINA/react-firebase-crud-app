@@ -1,5 +1,5 @@
 import React from 'react';
-import db from '../firebaseconfigs/firebaseInit'
+import db from '../firebaseconfigs/firebaseApp'
 
 class ViewStudents extends React.Component {
 
