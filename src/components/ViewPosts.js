@@ -4,7 +4,10 @@ import http from '../mixins/http';
 import confirm from '../mixins/confirmAlert';
 import moment from 'moment'
 
+import toastr from '../mixins/toastr';
+
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import '../css/viewpost.css';
 
 let responsiveImageStyles = {
     height: 'auto',
@@ -20,18 +23,19 @@ class ViewPosts extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            posts: []
+            posts: [],
+            postsFetched: false
         };
         this.deletePost = this.deletePost.bind(this);
         this.postDelete = this.postDelete.bind(this);
     }
 
-    deletePost () {
-        confirm("Confirm to delete post", "Are you sure you want to delete this post?", this.postDelete());
+    deletePost (id) {
+        //confirm("Confirm to delete post", "Are you sure you want to delete this post?: " + id, this.postDelete(id));
     }
 
-    postDelete () {
-        console.log("Deleting post");
+    postDelete (id) {
+        console.log("Deleting post with "+ id + " as id");
     }
 
     fetchImageURL (imageName, id) {
@@ -49,6 +53,9 @@ class ViewPosts extends React.Component {
     componentDidMount() {
         const $this = this;
         http.get('posts').then((doc) => {
+            $this.setState({
+                postsFetched: true
+            });
             doc.forEach((post) => {
                 this.fetchImageURL(post.data().image, post.id).then(url => {
                     let data = {
@@ -62,12 +69,17 @@ class ViewPosts extends React.Component {
                     $this.setState(prevStatus => ({
                         posts: [...prevStatus.posts, data]
                     }))
-                }).catch(error => console.log(error));
+                }).catch(error => {
+                    toastr.displayToast('error', error);
+                });
 
             });
 
         }).catch((error) => {
-            console.log(error);
+            $this.setState({
+                postsFetched: true
+            });
+            toastr.displayToast('error', error);
         })
     }
 
@@ -77,9 +89,6 @@ class ViewPosts extends React.Component {
     }
 
     render(){
-
-        console.log(this.state.posts);
-
         let posts = this.state.posts.map((post) => {
 
             return(
@@ -87,7 +96,7 @@ class ViewPosts extends React.Component {
                     <div className="card-header">
                         <h3>
                             {post.title}
-                            <small className="text-muted float-right">{ this.formatDate(post.time) }</small>
+                            <small className="time text-muted float-right">{ this.formatDate(post.time) }</small>
                         </h3>
                     </div>
                     { post.image !== '' &&
@@ -99,8 +108,8 @@ class ViewPosts extends React.Component {
                     </div>
 
                     <div>
-                        <Link to='/edit' className="btn-outline-primary btn" style={btn}>Edit</Link>
-                        <button onClick={this.deletePost}className="btn btn-outline-danger" style={btn}>Delete</button>
+                        <Link to={'/edit/' + post.id} className="btn-outline-primary btn" style={btn}>Edit</Link>
+                        <button onClick={this.deletePost(post.id)}className="btn btn-outline-danger" style={btn}>Delete</button>
                     </div>
                     <hr/>
                 </div>
@@ -108,6 +117,11 @@ class ViewPosts extends React.Component {
         return (
             <div>
                 <h1>Latest posts</h1>
+                { !this.state.postsFetched &&
+                <div className="postPage">
+                    <i className="fa fa-spinner fa-pulse fa-5x fa-fw" />
+                </div>
+                }
 
                 {posts}
             </div>

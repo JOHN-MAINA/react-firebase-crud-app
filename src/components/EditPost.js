@@ -1,12 +1,19 @@
 import React from 'react';
-import CKEditor from "react-ckeditor-component";
+import http from "../mixins/http";
+import toastr from '../mixins/toastr';
 
-let post = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 class EditPost extends React.Component{
 
     constructor(props) {
         super(props);
+        this.state = {
+            id: '',
+            body: '',
+            title: '',
+            time: ''
+        };
 
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -16,7 +23,35 @@ class EditPost extends React.Component{
         console.log("Form was submitted");
     }
 
-    componentWillMount () {
+    componentDidMount () {
+       http.getDocument('posts', this.props.match.params.id).then(postData => {
+            this.setState({
+                id: postData.id,
+                title: postData.data().title,
+                body: postData.data().body,
+                time: postData.data().time,
+                image: postData.data().image,
+                imageURL: ''
+            });
+           ClassicEditor.create( document.querySelector( '#editor' ) )
+               .then( editor => {
+
+               } )
+               .catch( error => {
+                   toastr.displayToast('error', "There was an error initializing the text editor");
+                   console.error( error );
+               } );
+
+            http.downloadImageURL(postData.data().image).then (imageURL => {
+                this.setState({
+                    imageURL: imageURL
+                })
+            }).catch(error => {
+                console.log(error);
+            })
+       }).catch(error => {
+           console.log(error);
+       })
 
     }
     render () {
@@ -26,12 +61,12 @@ class EditPost extends React.Component{
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
                         <label >Title</label>
-                        <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="Title" />
+                        <input type="text" value={this.state.title} className="form-control" id="exampleFormControlInput1" placeholder="Title" />
                     </div>
 
                     <div className="form-group">
                         <label >Post Content</label>
-                        <CKEditor content={post}/>
+                        <textarea id="editor" name="body" value={this.state.body} />
                     </div>
 
                     <div className="form-group">
@@ -40,6 +75,7 @@ class EditPost extends React.Component{
                     </div>
                     <button type="submit" className="btn btn-primary">Update</button>
                 </form>
+                <img src={this.state.imageURL} alt={this.state.title}/>
             </div>
         );
     }

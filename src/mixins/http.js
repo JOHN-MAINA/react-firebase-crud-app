@@ -1,5 +1,6 @@
 import db from '../firebaseconfigs/firestoreInit';
 import storage from '../firebaseconfigs/storageInit';
+import toastr from '../mixins/toastr';
 
 export default {
     get : function (collection) {
@@ -9,12 +10,31 @@ export default {
             };
 
             let onError = (error) => {
+                toastr.displayToast('error', error);
                 reject(error);
             };
 
-            db.collection(collection).get().then(onSuccess, onError);
+            db.collection(collection).orderBy("time", "desc").get().then(onSuccess, onError);
 
         })
+    },
+
+    getDocument: function (collection, id) {
+
+        return new Promise ((resolve, reject) => {
+            let onSuccess = (data) => {
+                resolve(data);
+            };
+
+            let onError = (error) => {
+                toastr.displayToast('error', error);
+                reject(error);
+            };
+
+            let docRef = db.collection(collection).doc(id);
+
+            docRef.get().then(onSuccess, onError);
+        });
 
     },
 
@@ -25,6 +45,7 @@ export default {
             };
 
             let onError = (error) => {
+                toastr.displayToast('error', "Was unable to add the document at the moment");
                 reject(error);
             };
 
@@ -39,6 +60,7 @@ export default {
             };
 
             let onError = (error) => {
+                toastr.displayToast('error', "Failed to upload the image at the moment");
                 reject(error);
             };
 
@@ -60,6 +82,7 @@ export default {
             };
 
             let onError = (error) => {
+                toastr.displayToast('error', "Failed to fetch image at the moment");
                 reject(error);
             };
 
@@ -78,6 +101,7 @@ export default {
             };
 
             let onError = (error) => {
+                toastr.displayToast('error', "Failed to delete the image at the moment");
                 reject(error);
             };
 
@@ -92,8 +116,8 @@ export default {
     deleteDocument: function (collection, id) {
 
         return Promise((resolve, reject) => {
-            var jobskill_query = db.collection(collection).where('id','==',id);
-            jobskill_query.get(function(querySnapshot) {
+            let docRef = db.collection(collection).doc(id);
+            docRef.get(function(querySnapshot) {
                 querySnapshot.forEach(function(doc) {
                     doc.ref.delete();
                 });

@@ -117,7 +117,7 @@ class Addpost extends React.Component{
                     </div>
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </form>
-                <img src={this.state.image} alt="Post"/>
+                <img src={this.state.imageData} alt="Post"/>
             </div>
         );
     }
