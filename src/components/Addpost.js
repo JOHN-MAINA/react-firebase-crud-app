@@ -110,14 +110,22 @@ class Addpost extends React.Component{
                                       "change": this.onCkChange
                                   }}/>
                     </div>
-
-                    <div className="form-group">
-                        <label >Post Image</label>
-                        <input type="file" name="image" onChange={this.onFileChange} className="form-control-file" />
+                    <div className="row postFileContainer">
+                        <div className="col-lg-6 col-sm-12 col-md-12">
+                            <div className="form-group">
+                                <label >Post Image</label>
+                                <input type="file" name="image" onChange={this.onFileChange} className="form-control-file" />
+                            </div>
+                        </div>
+                        <div className="col-lg-6 col-sm-12 col-md-12">
+                            <img src={this.state.imageData} alt="Post" className=".img-fluid postImage rounded mx-auto d-block"/>
+                        </div>
                     </div>
+
+
                     <button type="submit" className="btn btn-primary">Submit</button>
                 </form>
-                <img src={this.state.imageData} alt="Post"/>
+
             </div>
         );
     }
