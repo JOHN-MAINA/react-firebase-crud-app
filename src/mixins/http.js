@@ -19,6 +19,25 @@ export default {
         })
     },
 
+    updateDocument: function (collection, updatedData, id) {
+        return new Promise((resolve, reject) => {
+            let onSuccess = (data) => {
+                resolve(data);
+            };
+
+            let onError = (error) => {
+                toastr.displayToast('error', error);
+                reject(error);
+            };
+
+            let docRef = db.collection(collection).doc(id);
+
+            docRef.set(updatedData)
+                .then(onSuccess, onError);
+
+        })
+    },
+
     getDocument: function (collection, id) {
 
         return new Promise ((resolve, reject) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import http from '../mixins/http';
-import confirm from '../mixins/confirmAlert';
+//import confirm from '../mixins/confirmAlert';
 import moment from 'moment'
 
 import toastr from '../mixins/toastr';
